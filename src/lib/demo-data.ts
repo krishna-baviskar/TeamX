@@ -2,7 +2,7 @@ import { RoleBoardState } from "@/types/dashboard";
 
 export const INITIAL_STATE: RoleBoardState = {
   auth: {
-    role: null,
+    role: null, 
     viewerName: "",
   },
   team: {
