@@ -11,6 +11,7 @@ import { TeamMember, Task, ScheduleItem } from "@/types/dashboard";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 
 interface DataPanelProps {
   members: TeamMember[];
@@ -169,7 +170,7 @@ export function DataPanel({ members, onUpdateMembers, onReset }: DataPanelProps)
               </TableHeader>
               <TableBody>
                 {members.map(member => {
-                  const avg = Object.values(member.metrics).reduce((a, b) => a + b, 0) / 5;
+                  const avg = Object.values(member.metrics).reduce((a, b) => (a as number) + (b as number), 0) / 5;
                   const isSelected = selectedMemberId === member.id;
                   return (
                     <TableRow 
