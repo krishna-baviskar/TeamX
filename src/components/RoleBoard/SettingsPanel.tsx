@@ -1,3 +1,4 @@
+
 "use client";
 
 import React from "react";
@@ -7,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { AppSettings } from "@/types/dashboard";
-import { Moon, Sun, Palette, Shield, Download } from "lucide-react";
+import { Moon, Sun, Palette, Shield, Download, Lock } from "lucide-react";
 
 interface SettingsPanelProps {
   settings: AppSettings;
@@ -75,12 +76,26 @@ export function SettingsPanel({ settings, onUpdateSettings, onExport }: Settings
           <CardHeader>
             <div className="flex items-center gap-2">
               <Shield className="w-5 h-5 text-primary" />
-              <CardTitle>Visibility Controls</CardTitle>
+              <CardTitle>Security & Identity</CardTitle>
             </div>
-            <CardDescription>Limit what Viewers can access</CardDescription>
+            <CardDescription>System access and visibility</CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
+            <div className="space-y-2">
+              <Label className="flex items-center gap-2">
+                <Lock className="w-4 h-4" />
+                Admin Password
+              </Label>
+              <Input 
+                type="text"
+                placeholder="New admin password"
+                value={settings.adminPassword} 
+                onChange={(e) => onUpdateSettings({ ...settings, adminPassword: e.target.value })}
+              />
+              <p className="text-[10px] text-muted-foreground">This password will be required for Admin Portal access next login.</p>
+            </div>
+            
+            <div className="flex items-center justify-between pt-2 border-t">
               <Label htmlFor="show-names" className="flex flex-col gap-1">
                 <span>Show Real Names</span>
                 <span className="text-xs font-normal text-muted-foreground">Allow viewers to see teammate identities</span>
@@ -91,6 +106,7 @@ export function SettingsPanel({ settings, onUpdateSettings, onExport }: Settings
                 onCheckedChange={(checked) => onUpdateSettings({ ...settings, showMemberNamesInViewerCharts: checked })}
               />
             </div>
+
             <div className="space-y-2">
               <Label>Dashboard Title</Label>
               <Input 

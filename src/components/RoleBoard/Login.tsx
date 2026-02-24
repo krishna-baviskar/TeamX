@@ -11,19 +11,20 @@ import { Role } from "@/types/dashboard";
 
 interface LoginProps {
   onLogin: (role: Role, viewerName?: string) => void;
+  correctAdminPassword?: string;
 }
 
-export function Login({ onLogin }: LoginProps) {
+export function Login({ onLogin, correctAdminPassword = "admin123" }: LoginProps) {
   const [selectedRole, setSelectedRole] = useState<Role>(null);
   const [password, setPassword] = useState("");
   const [viewerName, setViewerName] = useState("");
   const [error, setError] = useState("");
 
   const handleAdminLogin = () => {
-    if (password === "admin123") {
+    if (password === correctAdminPassword) {
       onLogin("admin");
     } else {
-      setError("Incorrect password (Hint: admin123)");
+      setError(`Incorrect password (Hint: ${correctAdminPassword})`);
     }
   };
 

@@ -77,6 +77,7 @@ export const INITIAL_STATE: RoleBoardState = {
     accent: "#f97316",
     dashboardTitle: "RoleBoard Analytics",
     teamName: "Nexus Elite Squad",
+    adminPassword: "admin123",
     showMemberNamesInViewerCharts: true,
     viewerVisibleMetrics: ["velocity", "quality", "comms"]
   }

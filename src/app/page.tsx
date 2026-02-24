@@ -80,7 +80,7 @@ export default function RoleBoardApp() {
   if (!isMounted) return null;
 
   if (!state.auth.role) {
-    return <Login onLogin={handleLogin} />;
+    return <Login onLogin={handleLogin} correctAdminPassword={state.settings.adminPassword} />;
   }
 
   // --- Admin Views ---

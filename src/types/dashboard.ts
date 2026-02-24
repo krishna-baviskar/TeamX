@@ -45,6 +45,7 @@ export interface AppSettings {
   accent: string;
   dashboardTitle: string;
   teamName: string;
+  adminPassword: string;
   showMemberNamesInViewerCharts: boolean;
   viewerVisibleMetrics: string[];
 }
