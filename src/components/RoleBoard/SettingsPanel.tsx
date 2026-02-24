@@ -4,7 +4,7 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
+import { Input } from "@/components/ui/input"; 
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
 import { AppSettings } from "@/types/dashboard";
