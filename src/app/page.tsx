@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -10,19 +9,22 @@ import { DataPanel } from "@/components/RoleBoard/DataPanel";
 import { SettingsPanel } from "@/components/RoleBoard/SettingsPanel";
 import { RoleBoardState, Role, TeamMember, Task, ScheduleItem } from "@/types/dashboard";
 import { INITIAL_STATE } from "@/lib/demo-data";
-import { Users, Zap, Target, Star, AlertTriangle, TrendingUp, CheckCircle2, Clock, Calendar, ChevronRight, Circle, BarChart3, PieChart as PieIcon } from "lucide-react";
+import { Users, Zap, Target, Star, AlertTriangle, TrendingUp, CheckCircle2, Clock, Calendar, ChevronRight, Circle, BarChart3, PieChart as PieIcon, Plus, Send } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 export default function RoleBoardApp() {
   const [state, setState] = useState<RoleBoardState>(INITIAL_STATE);
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [isMounted, setIsMounted] = useState(false);
+  const [viewerNewTask, setViewerNewTask] = useState("");
   const { toast } = useToast();
 
   useEffect(() => {
@@ -78,6 +80,29 @@ export default function RoleBoardApp() {
       return m;
     });
     setState({ ...state, team: { ...state.team, members: updatedMembers } });
+  };
+
+  const handleViewerAddTask = (memberId: string) => {
+    if (!viewerNewTask.trim()) return;
+    
+    const newTask: Task = {
+      id: Math.random().toString(36).substr(2, 9),
+      text: viewerNewTask,
+      completed: false,
+      priority: 'medium',
+      category: 'Self'
+    };
+
+    const updatedMembers = state.team.members.map(m => {
+      if (m.id === memberId) {
+        return { ...m, tasks: [...(m.tasks || []), newTask] };
+      }
+      return m;
+    });
+
+    setState({ ...state, team: { ...state.team, members: updatedMembers } });
+    setViewerNewTask("");
+    toast({ title: "Mission Assigned", description: "You added a new task to your daily list." });
   };
 
   const handleExport = () => {
@@ -235,7 +260,7 @@ export default function RoleBoardApp() {
           
           {/* Visual Checklist */}
           <Card className="glass-card lg:col-span-2 border-l-4 border-l-primary/50 shadow-xl">
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-2 gap-4">
               <div className="space-y-1">
                 <CardTitle className="font-headline text-xl flex items-center gap-2">
                   <CheckCircle2 className="w-5 h-5 text-primary" />
@@ -243,9 +268,18 @@ export default function RoleBoardApp() {
                 </CardTitle>
                 <p className="text-xs text-muted-foreground">Focus objectives for today</p>
               </div>
-              <div className="text-right">
-                <p className="text-sm font-bold font-code">{completedTasks}/{tasks.length}</p>
-                <p className="text-[10px] text-muted-foreground uppercase">Complete</p>
+              
+              <div className="flex items-center gap-2 w-full sm:w-auto">
+                <Input 
+                  placeholder="New mission..." 
+                  className="h-8 text-xs font-code max-w-[200px]" 
+                  value={viewerNewTask}
+                  onChange={(e) => setViewerNewTask(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleViewerAddTask(currentMember.id)}
+                />
+                <Button size="icon" className="h-8 w-8" onClick={() => handleViewerAddTask(currentMember.id)}>
+                  <Plus className="h-4 w-4" />
+                </Button>
               </div>
             </CardHeader>
             <CardContent className="space-y-6">
