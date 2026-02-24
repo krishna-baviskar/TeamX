@@ -5,7 +5,7 @@ import React, { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Card } from "@/components/ui/card";
 
-interface StatsCardProps {
+interface StatsCardProps { 
   label: string;
   value: number;
   suffix?: string;
