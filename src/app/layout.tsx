@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = { 
   title: 'TeamX - Team Intelligence Dashboard',
   description: 'Role-Based Team Chart Dashboard for Admin and Viewers',
 };
