@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useState } from "react";
@@ -37,18 +38,18 @@ export function StatsCard({ label, value, suffix = "", icon, className, trend }:
   }, [value]);
 
   return (
-    <Card className={cn("glass-card accent-line-top p-6 flex flex-col justify-between overflow-hidden", className)}>
-      <div className="flex justify-between items-start mb-4">
-        <span className="text-muted-foreground text-sm font-medium uppercase tracking-wider">{label}</span>
-        {icon && <div className="text-primary opacity-80">{icon}</div>}
+    <Card className={cn("glass-card accent-line-top p-4 sm:p-6 flex flex-col justify-between overflow-hidden", className)}>
+      <div className="flex justify-between items-start mb-2 sm:mb-4">
+        <span className="text-muted-foreground text-[10px] sm:text-xs font-medium uppercase tracking-wider truncate mr-2">{label}</span>
+        {icon && <div className="text-primary opacity-80 flex-shrink-0 scale-90 sm:scale-100">{icon}</div>}
       </div>
-      <div className="flex items-baseline gap-1">
-        <span className="text-4xl font-headline font-extrabold font-code tracking-tighter">
+      <div className="flex items-baseline gap-1 flex-wrap">
+        <span className="text-2xl sm:text-3xl md:text-4xl font-headline font-extrabold font-code tracking-tighter truncate max-w-full">
           {displayValue}{suffix}
         </span>
         {trend && (
           <span className={cn(
-            "text-xs font-bold px-1.5 py-0.5 rounded ml-2",
+            "text-[10px] font-bold px-1.5 py-0.5 rounded ml-1 sm:ml-2",
             trend === "up" ? "bg-green-500/20 text-green-500" : 
             trend === "down" ? "bg-red-500/20 text-red-500" : "bg-muted text-muted-foreground"
           )}>

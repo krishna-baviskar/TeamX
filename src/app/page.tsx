@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -111,25 +112,25 @@ export default function RoleBoardApp() {
     });
 
     return (
-      <div className="space-y-8 animate-in fade-in duration-700">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard label="Team Velocity" value={avgVelocity} suffix="%" icon={<Zap />} trend="up" />
-          <StatsCard label="Avg Quality" value={avgQuality} suffix="%" icon={<Target />} trend="neutral" />
-          <StatsCard label="Team Size" value={state.team.members.length} suffix=" PAX" icon={<Users />} />
-          <StatsCard label="Top Performer" value={1} suffix={`: ${topPerformer?.name.split(' ')[0]}`} icon={<Star />} />
+      <div className="space-y-6 sm:space-y-8 animate-in fade-in duration-700">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <StatsCard label="Velocity" value={avgVelocity} suffix="%" icon={<Zap />} trend="up" />
+          <StatsCard label="Quality" value={avgQuality} suffix="%" icon={<Target />} trend="neutral" />
+          <StatsCard label="Team Size" value={state.team.members.length} suffix="" icon={<Users />} />
+          <StatsCard label="Top Star" value={1} suffix={`: ${topPerformer?.name.split(' ')[0]}`} icon={<Star />} />
         </div>
 
         {anomalies.length > 0 && (
           <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex items-center gap-4 animate-bounce">
-            <AlertTriangle className="text-destructive w-6 h-6" />
+            <AlertTriangle className="text-destructive w-6 h-6 flex-shrink-0" />
             <div>
-              <p className="font-bold text-destructive">Performance Anomaly Detected</p>
+              <p className="font-bold text-destructive text-sm sm:text-base">Performance Anomaly Detected</p>
               <p className="text-xs text-muted-foreground">{anomalies[0].name}'s score dropped significantly this week.</p>
             </div>
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ChartContainer title="Team Skill Aggregate" type="radar" data={radarData} size="1-col" />
           <ChartContainer title="Weekly Performance" type="line" data={state.team.members[0].trend} size="2-col" config={{ keys: ['value'] }} />
           <ChartContainer title="Performance Ranking" type="bar" data={memberCompData} size="2-col" />
@@ -159,31 +160,31 @@ export default function RoleBoardApp() {
     const myRank = sortedMembers.findIndex(m => m.id === currentMember.id) + 1;
 
     return (
-      <div className="space-y-8 animate-in slide-in-from-bottom-5 duration-700">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-4xl font-headline font-extrabold tracking-tighter">
-            Welcome back, <span className="text-primary">{viewerName}!</span>
+      <div className="space-y-6 sm:space-y-8 animate-in slide-in-from-bottom-5 duration-700">
+        <div className="flex flex-col gap-1 px-1">
+          <h2 className="text-2xl sm:text-4xl font-headline font-extrabold tracking-tighter">
+            Welcome, <span className="text-primary">{viewerName}!</span>
           </h2>
-          <p className="text-muted-foreground font-body">Here is your personal intelligence report for this sprint.</p>
+          <p className="text-sm sm:text-base text-muted-foreground font-body">Here is your personal intelligence report.</p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatsCard label="Your Avg Score" value={myAvg} suffix="%" icon={<Zap />} />
-          <StatsCard label="Team Rank" value={myRank} suffix={` of ${state.team.members.length}`} icon={<Users />} />
-          <StatsCard label="Primary Metric" value={currentMember.metrics.quality} suffix="% (Qual)" icon={<Target />} />
-          <StatsCard label="Recent Growth" value={12} suffix="%" icon={<TrendingUp />} trend="up" />
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+          <StatsCard label="Avg Score" value={myAvg} suffix="%" icon={<Zap />} />
+          <StatsCard label="Team Rank" value={myRank} suffix={`/${state.team.members.length}`} icon={<Users />} />
+          <StatsCard label="Quality" value={currentMember.metrics.quality} suffix="%" icon={<Target />} />
+          <StatsCard label="Growth" value={12} suffix="%" icon={<TrendingUp />} trend="up" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ChartContainer title="Your Professional Skill Map" type="radar" data={radarData} size="1-col" />
           <ChartContainer title="Personal Velocity Trend" type="area" data={currentMember.trend} size="2-col" />
           
-          <div className="glass-card p-6 flex flex-col gap-4">
+          <div className="glass-card p-6 flex flex-col gap-4 md:col-span-2 lg:col-span-1">
             <h3 className="font-headline text-xl">Squad Feed</h3>
             <div className="space-y-4">
               {state.team.announcements.map(ann => (
                 <div key={ann.id} className="border-l-2 border-primary/40 pl-4 py-1">
-                  <p className="text-xs text-muted-foreground font-code mb-1">{ann.date}</p>
+                  <p className="text-[10px] text-muted-foreground font-code mb-1">{ann.date}</p>
                   <p className="text-sm font-medium">{ann.text}</p>
                 </div>
               ))}
@@ -195,7 +196,7 @@ export default function RoleBoardApp() {
   };
 
   return (
-    <div className="min-h-screen pb-20">
+    <div className="min-h-screen pb-20 bg-background">
       <AppHeader 
         role={state.auth.role} 
         name={state.auth.viewerName} 
@@ -205,7 +206,7 @@ export default function RoleBoardApp() {
         title={state.settings.dashboardTitle}
       />
 
-      <main className="max-w-7xl mx-auto px-6 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         {state.auth.role === 'admin' ? (
           <>
             {activeTab === 'dashboard' && renderAdminDashboard()}
