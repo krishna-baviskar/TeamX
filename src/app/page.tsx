@@ -10,7 +10,7 @@ import { DataPanel } from "@/components/RoleBoard/DataPanel";
 import { SettingsPanel } from "@/components/RoleBoard/SettingsPanel";
 import { RoleBoardState, Role, TeamMember, Task, ScheduleItem } from "@/types/dashboard";
 import { INITIAL_STATE } from "@/lib/demo-data";
-import { Users, Zap, Target, Star, AlertTriangle, TrendingUp, CheckCircle2, Clock, Calendar, ChevronRight, Circle } from "lucide-react";
+import { Users, Zap, Target, Star, AlertTriangle, TrendingUp, CheckCircle2, Clock, Calendar, ChevronRight, Circle, BarChart3, PieChart as PieIcon } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -122,6 +122,21 @@ export default function RoleBoardApp() {
       value: Math.floor(Object.values(m.metrics).reduce((a, b) => a + b, 0) / 5) 
     }));
 
+    const taskDistribution = state.team.members.map(m => ({
+      name: m.name,
+      value: (m.tasks || []).length
+    }));
+
+    const qualityData = state.team.members.map(m => ({
+      name: m.name.split(' ')[0],
+      value: m.metrics.quality
+    }));
+
+    const roleDistribution = Array.from(new Set(state.team.members.map(m => m.title))).map(title => ({
+      name: title,
+      value: state.team.members.filter(m => m.title === title).length
+    }));
+
     const anomalies = state.team.members.filter(m => {
       if (m.trend.length < 2) return false;
       const last = m.trend[m.trend.length - 1].value;
@@ -139,7 +154,7 @@ export default function RoleBoardApp() {
         </div>
 
         {anomalies.length > 0 && (
-          <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex items-center gap-4 animate-bounce">
+          <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-lg flex items-center gap-4 animate-pulse">
             <AlertTriangle className="text-destructive w-6 h-6 flex-shrink-0" />
             <div>
               <p className="font-bold text-destructive text-sm sm:text-base">Performance Anomaly Detected</p>
@@ -150,9 +165,11 @@ export default function RoleBoardApp() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ChartContainer title="Team Skill Aggregate" type="radar" data={radarData} size="1-col" />
-          <ChartContainer title="Weekly Performance" type="line" data={state.team.members[0].trend} size="2-col" config={{ keys: ['value'] }} />
+          <ChartContainer title="Quality Benchmark" type="bar" data={qualityData} size="2-col" />
           <ChartContainer title="Performance Ranking" type="bar" data={memberCompData} size="2-col" />
-          <ChartContainer title="Task Distribution" type="pie" data={memberCompData} size="1-col" />
+          <ChartContainer title="Role Distribution" type="pie" data={roleDistribution} size="1-col" />
+          <ChartContainer title="Task Load Distribution" type="bar" data={taskDistribution} size="2-col" />
+          <ChartContainer title="Weekly Progress" type="area" data={state.team.members[0].trend} size="1-col" />
         </div>
       </div>
     );
@@ -182,6 +199,20 @@ export default function RoleBoardApp() {
     const completedTasks = tasks.filter(t => t.completed).length;
     const progressPercent = tasks.length > 0 ? Math.floor((completedTasks / tasks.length) * 100) : 0;
 
+    // Category Chart Data
+    const categoryCount: Record<string, number> = {};
+    tasks.forEach(t => {
+      categoryCount[t.category] = (categoryCount[t.category] || 0) + 1;
+    });
+    const categoryChartData = Object.entries(categoryCount).map(([name, value]) => ({ name, value }));
+
+    // Schedule Mix Data
+    const scheduleCount: Record<string, number> = {};
+    (currentMember.schedule || []).forEach(s => {
+      scheduleCount[s.type] = (scheduleCount[s.type] || 0) + 1;
+    });
+    const scheduleChartData = Object.entries(scheduleCount).map(([name, value]) => ({ name, value }));
+
     return (
       <div className="space-y-6 sm:space-y-10 animate-in slide-in-from-bottom-5 duration-700">
         <div className="flex flex-col gap-1 px-1">
@@ -199,11 +230,11 @@ export default function RoleBoardApp() {
           <StatsCard label="Growth" value={12} suffix="%" icon={<TrendingUp />} trend="up" />
         </div>
 
-        {/* Daily Operations - The New Visual Section */}
+        {/* Daily Operations Section */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
           {/* Visual Checklist */}
-          <Card className="glass-card lg:col-span-2 border-l-4 border-l-primary/50">
+          <Card className="glass-card lg:col-span-2 border-l-4 border-l-primary/50 shadow-xl">
             <CardHeader className="flex flex-row items-center justify-between pb-2">
               <div className="space-y-1">
                 <CardTitle className="font-headline text-xl flex items-center gap-2">
@@ -226,7 +257,7 @@ export default function RoleBoardApp() {
                 <Progress value={progressPercent} className="h-2" />
               </div>
               
-              <div className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {tasks.map((task) => (
                   <div 
                     key={task.id} 
@@ -258,14 +289,14 @@ export default function RoleBoardApp() {
                   </div>
                 ))}
                 {tasks.length === 0 && (
-                  <p className="text-center py-8 text-muted-foreground italic">No tasks assigned for today.</p>
+                  <p className="col-span-2 text-center py-8 text-muted-foreground italic">No tasks assigned for today.</p>
                 )}
               </div>
             </CardContent>
           </Card>
 
           {/* Visual Schedule Timeline */}
-          <Card className="glass-card flex flex-col h-full border-l-4 border-l-secondary/50">
+          <Card className="glass-card flex flex-col h-full border-l-4 border-l-secondary/50 shadow-xl">
             <CardHeader className="pb-2">
               <CardTitle className="font-headline text-xl flex items-center gap-2">
                 <Clock className="w-5 h-5 text-secondary" />
@@ -273,7 +304,7 @@ export default function RoleBoardApp() {
               </CardTitle>
               <p className="text-xs text-muted-foreground">Timeline of scheduled blocks</p>
             </CardHeader>
-            <CardContent className="flex-1">
+            <CardContent className="flex-1 overflow-y-auto max-h-[400px]">
               <div className="relative space-y-4 pt-2">
                 <div className="absolute left-[11px] top-6 bottom-4 w-px bg-border" />
                 
@@ -306,28 +337,31 @@ export default function RoleBoardApp() {
               </div>
             </CardContent>
           </Card>
-
         </div>
 
-        {/* Performance Charts Section */}
+        {/* Analytics Section */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <ChartContainer title="Skill Matrix" type="radar" data={radarData} size="1-col" />
+          <ChartContainer title="Task Categories" type="bar" data={categoryChartData} size="1-col" />
+          <ChartContainer title="Activity Mix" type="pie" data={scheduleChartData} size="1-col" />
           <ChartContainer title="Velocity Trajectory" type="area" data={currentMember.trend} size="2-col" />
           
-          <div className="glass-card p-6 flex flex-col gap-4 md:col-span-2 lg:col-span-1 border-t-4 border-t-primary/30">
-            <h3 className="font-headline text-xl flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-primary" />
-              Squad Intel
-            </h3>
-            <div className="space-y-4">
+          <Card className="glass-card md:col-span-1 lg:col-span-1 border-t-4 border-t-primary/30">
+            <CardHeader>
+              <CardTitle className="font-headline text-xl flex items-center gap-2">
+                <Calendar className="w-5 h-5 text-primary" />
+                Squad Intel
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
               {state.team.announcements.map(ann => (
-                <div key={ann.id} className="border-l-2 border-primary/40 pl-4 py-1 hover:bg-muted/10 transition-colors rounded-r-md">
+                <div key={ann.id} className="border-l-2 border-primary/40 pl-4 py-2 hover:bg-muted/10 transition-colors rounded-r-md">
                   <p className="text-[10px] text-muted-foreground font-code mb-1">{ann.date}</p>
                   <p className="text-sm font-medium">{ann.text}</p>
                 </div>
               ))}
-            </div>
-          </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useState, useEffect } from "react";
@@ -30,7 +31,17 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
     "full": "col-span-1 md:col-span-3",
   };
 
+  const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', '#ffc658', '#8884d8', '#82ca9d', '#ff8042', '#0088fe'];
+
   const renderChart = () => {
+    if (!data || data.length === 0) {
+      return (
+        <div className="flex items-center justify-center h-full text-muted-foreground text-sm italic">
+          No data available
+        </div>
+      );
+    }
+
     switch (type) {
       case "line":
         return (
@@ -38,11 +49,13 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#333', borderRadius: '8px' }} />
+            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
             <Legend verticalAlign="top" height={36} />
-            {config?.keys?.map((key: string, idx: number) => (
-              <Line key={key} type="monotone" dataKey={key} stroke={idx === 0 ? "hsl(var(--primary))" : "hsl(var(--secondary))"} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
-            ))}
+            {config?.keys ? config.keys.map((key: string, idx: number) => (
+              <Line key={key} type="monotone" dataKey={key} stroke={COLORS[idx % COLORS.length]} strokeWidth={3} dot={{ r: 4 }} activeDot={{ r: 6 }} />
+            )) : (
+              <Line type="monotone" dataKey="value" stroke="hsl(var(--primary))" strokeWidth={3} dot={{ r: 4 }} />
+            )}
           </LineChart>
         );
       case "bar":
@@ -51,22 +64,25 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
             <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#333', borderRadius: '8px' }} />
-            <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
+            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
+            <Bar dataKey="value" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]}>
+               {data.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+              ))}
+            </Bar>
           </BarChart>
         );
       case "area":
         return (
           <AreaChart data={data}>
             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="name" stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
+            <XAxis dataKey="week" stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
             <YAxis stroke="#888" fontSize={12} tickLine={false} axisLine={false} />
-            <Tooltip contentStyle={{ backgroundColor: '#111', borderColor: '#333', borderRadius: '8px' }} />
+            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
             <Area type="monotone" dataKey="value" stroke="hsl(var(--secondary))" fillOpacity={0.3} fill="hsl(var(--secondary))" />
           </AreaChart>
         );
       case "pie":
-        const COLORS = ['hsl(var(--primary))', 'hsl(var(--secondary))', '#ffc658', '#8884d8', '#82ca9d'];
         return (
           <PieChart>
             <Pie
@@ -83,7 +99,7 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
-            <Tooltip />
+            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
             <Legend />
           </PieChart>
         );
@@ -94,13 +110,13 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
             <PolarAngleAxis dataKey="subject" tick={{ fill: '#888', fontSize: 10 }} />
             <PolarRadiusAxis angle={30} domain={[0, 100]} tick={{ fill: '#666' }} />
             <Radar
-              name="Team Avg"
+              name="Metrics"
               dataKey="A"
               stroke="hsl(var(--primary))"
               fill="hsl(var(--primary))"
               fillOpacity={0.4}
             />
-            <Tooltip />
+            <Tooltip contentStyle={{ backgroundColor: 'hsl(var(--card))', borderColor: 'hsl(var(--border))', borderRadius: '8px' }} />
           </RadarChart>
         );
       default:
@@ -109,7 +125,7 @@ export function ChartContainer({ title, subtitle, type, data, size = "1-col", co
   };
 
   return (
-    <Card className={cn("glass-card overflow-hidden", sizeClass[size])}>
+    <Card className={cn("glass-card overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300", sizeClass[size])}>
       <CardHeader className="pb-2">
         <CardTitle className="text-lg font-headline">{title}</CardTitle>
         {subtitle && <CardDescription className="text-xs">{subtitle}</CardDescription>}
