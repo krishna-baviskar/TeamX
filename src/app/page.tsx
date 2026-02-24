@@ -8,11 +8,16 @@ import { StatsCard } from "@/components/RoleBoard/StatsCard";
 import { ChartContainer } from "@/components/RoleBoard/ChartContainer";
 import { DataPanel } from "@/components/RoleBoard/DataPanel";
 import { SettingsPanel } from "@/components/RoleBoard/SettingsPanel";
-import { RoleBoardState, Role, TeamMember } from "@/types/dashboard";
+import { RoleBoardState, Role, TeamMember, Task, ScheduleItem } from "@/types/dashboard";
 import { INITIAL_STATE } from "@/lib/demo-data";
-import { Users, Zap, Target, Star, AlertTriangle, TrendingUp } from "lucide-react";
+import { Users, Zap, Target, Star, AlertTriangle, TrendingUp, CheckCircle2, Clock, Calendar, ChevronRight, Circle } from "lucide-react";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { cn } from "@/lib/utils";
 
 export default function RoleBoardApp() {
   const [state, setState] = useState<RoleBoardState>(INITIAL_STATE);
@@ -60,6 +65,19 @@ export default function RoleBoardApp() {
 
   const handleUpdateSettings = (settings: any) => {
     setState({ ...state, settings });
+  };
+
+  const toggleTask = (memberId: string, taskId: string) => {
+    const updatedMembers = state.team.members.map(m => {
+      if (m.id === memberId && m.tasks) {
+        return {
+          ...m,
+          tasks: m.tasks.map(t => t.id === taskId ? { ...t, completed: !t.completed } : t)
+        };
+      }
+      return m;
+    });
+    setState({ ...state, team: { ...state.team, members: updatedMembers } });
   };
 
   const handleExport = () => {
@@ -159,15 +177,21 @@ export default function RoleBoardApp() {
     );
     const myRank = sortedMembers.findIndex(m => m.id === currentMember.id) + 1;
 
+    // Task Logic
+    const tasks = currentMember.tasks || [];
+    const completedTasks = tasks.filter(t => t.completed).length;
+    const progressPercent = tasks.length > 0 ? Math.floor((completedTasks / tasks.length) * 100) : 0;
+
     return (
-      <div className="space-y-6 sm:space-y-8 animate-in slide-in-from-bottom-5 duration-700">
+      <div className="space-y-6 sm:space-y-10 animate-in slide-in-from-bottom-5 duration-700">
         <div className="flex flex-col gap-1 px-1">
           <h2 className="text-2xl sm:text-4xl font-headline font-extrabold tracking-tighter">
             Welcome, <span className="text-primary">{viewerName}!</span>
           </h2>
-          <p className="text-sm sm:text-base text-muted-foreground font-body">Here is your personal intelligence report.</p>
+          <p className="text-sm sm:text-base text-muted-foreground font-body">Your personal performance & daily operations hub.</p>
         </div>
 
+        {/* Top Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           <StatsCard label="Avg Score" value={myAvg} suffix="%" icon={<Zap />} />
           <StatsCard label="Team Rank" value={myRank} suffix={`/${state.team.members.length}`} icon={<Users />} />
@@ -175,15 +199,129 @@ export default function RoleBoardApp() {
           <StatsCard label="Growth" value={12} suffix="%" icon={<TrendingUp />} trend="up" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <ChartContainer title="Your Professional Skill Map" type="radar" data={radarData} size="1-col" />
-          <ChartContainer title="Personal Velocity Trend" type="area" data={currentMember.trend} size="2-col" />
+        {/* Daily Operations - The New Visual Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
-          <div className="glass-card p-6 flex flex-col gap-4 md:col-span-2 lg:col-span-1">
-            <h3 className="font-headline text-xl">Squad Feed</h3>
+          {/* Visual Checklist */}
+          <Card className="glass-card lg:col-span-2 border-l-4 border-l-primary/50">
+            <CardHeader className="flex flex-row items-center justify-between pb-2">
+              <div className="space-y-1">
+                <CardTitle className="font-headline text-xl flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-primary" />
+                  Daily Mission Checklist
+                </CardTitle>
+                <p className="text-xs text-muted-foreground">Focus objectives for today</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-bold font-code">{completedTasks}/{tasks.length}</p>
+                <p className="text-[10px] text-muted-foreground uppercase">Complete</p>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <div className="flex justify-between text-[10px] font-bold uppercase tracking-wider text-muted-foreground">
+                  <span>Progress</span>
+                  <span>{progressPercent}%</span>
+                </div>
+                <Progress value={progressPercent} className="h-2" />
+              </div>
+              
+              <div className="space-y-3">
+                {tasks.map((task) => (
+                  <div 
+                    key={task.id} 
+                    className={cn(
+                      "group flex items-center justify-between p-3 rounded-lg transition-all border border-transparent",
+                      task.completed ? "bg-muted/30 opacity-60" : "bg-card hover:border-primary/20 hover:shadow-md"
+                    )}
+                  >
+                    <div className="flex items-center gap-3">
+                      <Checkbox 
+                        checked={task.completed} 
+                        onCheckedChange={() => toggleTask(currentMember.id, task.id)}
+                        className="w-5 h-5 rounded-md"
+                      />
+                      <div className="flex flex-col">
+                        <span className={cn("text-sm font-medium", task.completed && "line-through")}>
+                          {task.text}
+                        </span>
+                        <div className="flex gap-2 mt-1">
+                          <span className="text-[9px] font-code uppercase px-1.5 py-0.5 bg-muted rounded">
+                            {task.category}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <Badge variant={task.priority === 'high' ? 'destructive' : task.priority === 'medium' ? 'default' : 'secondary'} className="text-[9px] uppercase h-5">
+                      {task.priority}
+                    </Badge>
+                  </div>
+                ))}
+                {tasks.length === 0 && (
+                  <p className="text-center py-8 text-muted-foreground italic">No tasks assigned for today.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Visual Schedule Timeline */}
+          <Card className="glass-card flex flex-col h-full border-l-4 border-l-secondary/50">
+            <CardHeader className="pb-2">
+              <CardTitle className="font-headline text-xl flex items-center gap-2">
+                <Clock className="w-5 h-5 text-secondary" />
+                Daily Pulse
+              </CardTitle>
+              <p className="text-xs text-muted-foreground">Timeline of scheduled blocks</p>
+            </CardHeader>
+            <CardContent className="flex-1">
+              <div className="relative space-y-4 pt-2">
+                <div className="absolute left-[11px] top-6 bottom-4 w-px bg-border" />
+                
+                {currentMember.schedule?.map((item, idx) => (
+                  <div key={item.id} className="relative pl-8 group">
+                    <div className={cn(
+                      "absolute left-0 top-1.5 w-6 h-6 rounded-full border-2 bg-background flex items-center justify-center z-10 transition-transform group-hover:scale-110",
+                      item.type === 'meeting' ? "border-red-500" :
+                      item.type === 'focus' ? "border-primary" :
+                      item.type === 'review' ? "border-secondary" : "border-muted-foreground"
+                    )}>
+                      <div className={cn(
+                        "w-2 h-2 rounded-full",
+                        item.type === 'meeting' ? "bg-red-500" :
+                        item.type === 'focus' ? "bg-primary" :
+                        item.type === 'review' ? "bg-secondary" : "bg-muted-foreground"
+                      )} />
+                    </div>
+                    
+                    <div className="flex flex-col gap-1 p-3 rounded-lg bg-muted/20 border border-transparent hover:border-border transition-all">
+                      <span className="text-[10px] font-bold font-code text-muted-foreground">{item.time}</span>
+                      <span className="text-sm font-semibold">{item.title}</span>
+                      <span className="text-[9px] uppercase tracking-widest text-muted-foreground opacity-70">{item.type}</span>
+                    </div>
+                  </div>
+                ))}
+                {(!currentMember.schedule || currentMember.schedule.length === 0) && (
+                  <p className="text-center py-8 text-muted-foreground italic">Clear schedule today.</p>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+        </div>
+
+        {/* Performance Charts Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <ChartContainer title="Skill Matrix" type="radar" data={radarData} size="1-col" />
+          <ChartContainer title="Velocity Trajectory" type="area" data={currentMember.trend} size="2-col" />
+          
+          <div className="glass-card p-6 flex flex-col gap-4 md:col-span-2 lg:col-span-1 border-t-4 border-t-primary/30">
+            <h3 className="font-headline text-xl flex items-center gap-2">
+              <Calendar className="w-5 h-5 text-primary" />
+              Squad Intel
+            </h3>
             <div className="space-y-4">
               {state.team.announcements.map(ann => (
-                <div key={ann.id} className="border-l-2 border-primary/40 pl-4 py-1">
+                <div key={ann.id} className="border-l-2 border-primary/40 pl-4 py-1 hover:bg-muted/10 transition-colors rounded-r-md">
                   <p className="text-[10px] text-muted-foreground font-code mb-1">{ann.date}</p>
                   <p className="text-sm font-medium">{ann.text}</p>
                 </div>
@@ -206,7 +344,7 @@ export default function RoleBoardApp() {
         title={state.settings.dashboardTitle}
       />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {state.auth.role === 'admin' ? (
           <>
             {activeTab === 'dashboard' && renderAdminDashboard()}

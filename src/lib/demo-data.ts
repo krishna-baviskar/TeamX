@@ -18,6 +18,18 @@ export const INITIAL_STATE: RoleBoardState = {
           { week: "W3", value: 85 },
           { week: "W4", value: 82 },
           { week: "W5", value: 90 },
+        ],
+        tasks: [
+          { id: "t1", text: "Review PR #442 (API Refactor)", completed: false, priority: 'high', category: 'Dev' },
+          { id: "t2", text: "Update architecture documentation", completed: true, priority: 'medium', category: 'Docs' },
+          { id: "t3", text: "Prepare for Sprint planning", completed: false, priority: 'medium', category: 'Admin' },
+          { id: "t4", text: "Debug memory leak in production", completed: false, priority: 'high', category: 'Critical' },
+        ],
+        schedule: [
+          { id: "s1", time: "09:00 AM", title: "Daily Standup", type: 'meeting' },
+          { id: "s2", time: "10:00 AM", title: "Focus Block: API Refactor", type: 'focus' },
+          { id: "s3", time: "12:00 PM", title: "Lunch Break", type: 'break' },
+          { id: "s4", time: "02:00 PM", title: "Architecture Review", type: 'review' },
         ]
       },
       {
@@ -31,6 +43,16 @@ export const INITIAL_STATE: RoleBoardState = {
           { week: "W3", value: 88 },
           { week: "W4", value: 92 },
           { week: "W5", value: 95 },
+        ],
+        tasks: [
+          { id: "t1", text: "Finalize high-fidelity mockups for V2", completed: false, priority: 'high', category: 'Design' },
+          { id: "t2", text: "User feedback interview session", completed: true, priority: 'medium', category: 'Research' },
+          { id: "t3", text: "Design system component audit", completed: false, priority: 'low', category: 'Maint' },
+        ],
+        schedule: [
+          { id: "s1", time: "09:30 AM", title: "Design Sync", type: 'meeting' },
+          { id: "s2", time: "11:00 AM", title: "User Interview", type: 'review' },
+          { id: "s3", time: "01:30 PM", title: "Creative Focus", type: 'focus' },
         ]
       },
       {
@@ -44,6 +66,14 @@ export const INITIAL_STATE: RoleBoardState = {
           { week: "W3", value: 85 },
           { week: "W4", value: 80 },
           { week: "W5", value: 75 },
+        ],
+        tasks: [
+          { id: "t1", text: "Database migration script", completed: true, priority: 'high', category: 'Ops' },
+          { id: "t2", text: "API endpoint optimization", completed: false, priority: 'medium', category: 'Perf' },
+        ],
+        schedule: [
+          { id: "s1", time: "09:00 AM", title: "Daily Standup", type: 'meeting' },
+          { id: "s2", time: "03:00 PM", title: "Release Prep", type: 'review' },
         ]
       },
       {
@@ -57,6 +87,14 @@ export const INITIAL_STATE: RoleBoardState = {
           { week: "W3", value: 82 },
           { week: "W4", value: 88 },
           { week: "W5", value: 92 },
+        ],
+        tasks: [
+          { id: "t1", text: "Implement login flow animations", completed: false, priority: 'medium', category: 'UI' },
+          { id: "t2", text: "Fix responsive layout bugs", completed: true, priority: 'high', category: 'UI' },
+        ],
+        schedule: [
+          { id: "s1", time: "10:00 AM", title: "Sprint Grooming", type: 'meeting' },
+          { id: "s2", time: "02:00 PM", title: "Frontend Lab", type: 'focus' },
         ]
       }
     ],

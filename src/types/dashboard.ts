@@ -13,12 +13,29 @@ export interface TrendPoint {
   value: number;
 }
 
+export interface Task {
+  id: string;
+  text: string;
+  completed: boolean;
+  priority: 'low' | 'medium' | 'high';
+  category: string;
+}
+
+export interface ScheduleItem {
+  id: string;
+  time: string;
+  title: string;
+  type: 'meeting' | 'focus' | 'break' | 'review';
+}
+
 export interface TeamMember {
   id: string;
   name: string;
   title: string;
   metrics: Metrics;
   trend: TrendPoint[];
+  tasks?: Task[];
+  schedule?: ScheduleItem[];
 }
 
 export interface Announcement {
