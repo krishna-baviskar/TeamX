@@ -43,7 +43,7 @@ export const INITIAL_STATE: RoleBoardState = {
           { week: "W2", value: 90 },
           { week: "W3", value: 85 },
           { week: "W4", value: 80 },
-          { week: "W5", value: 75 }, // Anomaly: dropping
+          { week: "W5", value: 75 },
         ]
       },
       {
@@ -75,7 +75,7 @@ export const INITIAL_STATE: RoleBoardState = {
   settings: {
     theme: "dark",
     accent: "#f97316",
-    dashboardTitle: "RoleBoard Analytics",
+    dashboardTitle: "TeamX Analytics",
     teamName: "Nexus Elite Squad",
     adminPassword: "admin123",
     showMemberNamesInViewerCharts: true,

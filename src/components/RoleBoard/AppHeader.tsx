@@ -1,4 +1,3 @@
-
 "use client";
 
 import React from "react";
@@ -73,7 +72,7 @@ export function AppHeader({ role, name, onLogout, activeTab, setActiveTab, title
               </Sheet>
             </div>
           )}
-          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-headline font-bold text-white text-lg flex-shrink-0">R</div>
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center font-headline font-bold text-white text-lg flex-shrink-0">X</div>
           <span className="font-headline font-bold text-lg sm:text-xl tracking-tight hidden xs:inline-block truncate max-w-[120px] sm:max-w-none">{title}</span>
         </div>
 

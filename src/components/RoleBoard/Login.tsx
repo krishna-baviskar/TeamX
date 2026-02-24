@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, { useState } from "react";
@@ -46,7 +45,7 @@ export function Login({ onLogin, correctAdminPassword = "admin123" }: LoginProps
             <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary rounded-xl flex items-center justify-center shadow-lg shadow-primary/20 flex-shrink-0">
               <ShieldCheck className="text-white w-6 h-6 sm:w-8 sm:h-8" />
             </div>
-            <h1 className="text-3xl sm:text-5xl font-headline font-extrabold tracking-tighter">ROLEBOARD</h1>
+            <h1 className="text-3xl sm:text-5xl font-headline font-extrabold tracking-tighter">TEAMX</h1>
           </div>
           <p className="text-base sm:text-xl text-muted-foreground font-body max-w-md mx-auto md:mx-0">
             The next-generation team performance intelligence engine. Choose your access level to begin.

@@ -2,7 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'RoleBoard - Team Intelligence Dashboard',
+  title: 'TeamX - Team Intelligence Dashboard',
   description: 'Role-Based Team Chart Dashboard for Admin and Viewers',
 };
 
