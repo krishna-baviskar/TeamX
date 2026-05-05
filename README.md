@@ -12,7 +12,7 @@ TeamX is a next-generation team performance intelligence engine designed to prov
 - **Charts**: [Recharts](https://recharts.org/)
 - **State Management**: React Hooks + LocalStorage Persistence
 - **Typography**: Syne (Headlines), Inter (Body), IBM Plex Mono (Data/Code)
-
+ 
 ## 🛡️ Role-Based Features
  
 ### 👑 Administrator Portal
